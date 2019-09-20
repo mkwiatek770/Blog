@@ -15,6 +15,8 @@ class UserModel(db.Model):
     active = db.Column(db.Boolean, default=False)
     is_staff = db.Column(db.Boolean, default=False)
     is_superuser = db.Column(db.Boolean, default=False)
+    # path to image file
+    avatar_name = db.Column(db.String)
 
     @classmethod
     def find_all(cls) -> List["UserModel"]:

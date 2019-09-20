@@ -108,6 +108,9 @@ venv.bak/
 # Vscode
 *.vscode/
 
+# Images
+*static/
+
 # Spyder project settings
 .spyderproject
 .spyproject

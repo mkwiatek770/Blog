@@ -8,12 +8,17 @@ from typing import Union
 from werkzeug.datastructures import FileStorage
 from flask_uploads import UploadSet, IMAGES
 
-IMAGE_SET = UploadSet(name="images", IMAGES)
+IMAGE_SET = UploadSet(name="images", extensions=IMAGES)
 
 
 def save_image(image: FileStorage, folder: str = None, name: str = None) -> str:
     """Saves image and return it's name in storage."""
     return IMAGE_SET.save(image, folder, name)
+
+
+def delele_image(filename: str, folder: str) -> None:
+    image_path = get_path(filename, folder)
+    os.remove(image_path)
 
 
 def get_path(filename: str, folder: str):
