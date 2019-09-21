@@ -1,4 +1,5 @@
 from datetime import datetime
+from slugify import slugify
 from settings.db import db
 
 
@@ -31,3 +32,27 @@ class Article(db.Model):
     author = db.relationship("UserModel")
     likes = db.relationship("ArticleLikes")
     tags = db.relationship("ArticleTags")
+
+    @property
+    def slug(self):
+        return slugify(self.title)
+
+    @classmethod
+    def find_by_id(cls, _id: int) -> "TagModel":
+        return cls.query.filter_by(id=_id).first()
+
+    def publish(self):
+        self.published_date = datetime.utcnow()
+        self.save_to_db()
+
+    def unplish(self):
+        self.published_date = None
+        self.save_to_db()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
