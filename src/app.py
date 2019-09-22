@@ -11,6 +11,7 @@ load_dotenv('./.env', verbose=True)
 
 from libs.image_helper import IMAGE_SET
 from resources.user import UserLogin, UserLogout, TokenRefresh, User, UserAvatar
+from resources.article import PublishedArticles, UnpublishedArticles, Article
 from settings.blacklist import BLACKLIST
 from settings.ma import ma
 from settings.db import db
@@ -53,6 +54,9 @@ api.add_resource(UserLogout, "/api/v1/logout")
 api.add_resource(TokenRefresh, "/api/v1/refresh")
 api.add_resource(User, "/api/v1/users/<string:username>")
 api.add_resource(UserAvatar, "/api/v1/users/<string:username>/avatar")
+api.add_resource(PublishedArticles, "/api/v1/articles")
+api.add_resource(UnpublishedArticles, "/api/v1/articles/draft")
+api.add_resource(Article, "/api/v1/articles/<string:slug>")
 
 if __name__ == "__main__":
     db.init_app(app)

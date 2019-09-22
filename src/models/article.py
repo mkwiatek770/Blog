@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 from slugify import slugify
 from settings.db import db
 
@@ -40,6 +41,21 @@ class ArticleModel(db.Model):
     @classmethod
     def find_by_id(cls, _id: int) -> "ArticleModel":
         return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_all(cls, published: bool = True) -> List["ArticleModel"]:
+        if published:
+            return cls.query.filter(cls.published_date != None)
+        return cls.query.filter(cls.published_date == None)
+
+    @classmethod
+    def find_by_slug(cls, slug: str) -> "ArticleModel":
+        unslugged_title = " ".join(slug.split("-"))
+        return cls.query.filter(cls.title.ilike(unslugged_title)).first()
+
+    @classmethod
+    def find_by_title(cls, title: str) -> "ArticleModel":
+        return cls.query.filter_by(title=title).first()
 
     def publish(self) -> None:
         self.published_date = datetime.utcnow()
