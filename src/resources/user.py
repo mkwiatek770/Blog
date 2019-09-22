@@ -15,7 +15,7 @@ from flask_jwt_extended import (
 from libs import image_helper
 from settings.blacklist import BLACKLIST
 from schemas.user import UserSchema
-from models.user import UserModel
+from models import UserModel
 from schemas.image import ImageSchema
 
 user_schema = UserSchema()

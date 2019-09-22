@@ -17,7 +17,7 @@ class ArticleTags(db.Model):
     article_id = db.Column(db.Integer, db.ForeignKey("blog_article.id"))
 
 
-class Article(db.Model):
+class ArticleModel(db.Model):
     __tablename__ = "blog_article"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -34,25 +34,25 @@ class Article(db.Model):
     tags = db.relationship("ArticleTags")
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title)
 
     @classmethod
-    def find_by_id(cls, _id: int) -> "TagModel":
+    def find_by_id(cls, _id: int) -> "ArticleModel":
         return cls.query.filter_by(id=_id).first()
 
-    def publish(self):
+    def publish(self) -> None:
         self.published_date = datetime.utcnow()
         self.save_to_db()
 
-    def unplish(self):
+    def unplish(self) -> None:
         self.published_date = None
         self.save_to_db()
 
-    def save_to_db(self):
+    def save_to_db(self) -> None:
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()

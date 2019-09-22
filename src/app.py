@@ -32,6 +32,11 @@ bcrypt = Bcrypt(app)
 def create_tables():
     db.create_all()
 
+@app.shell_context_processor
+def make_shell_context():
+    db.init_app(app)
+    return {'db': db}
+
 # global error handler
 @app.errorhandler(ValidationError)
 def handle_marshmallow_validation(err):
