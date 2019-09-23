@@ -4,19 +4,15 @@ from slugify import slugify
 from settings.db import db
 
 
-class ArticleLikes(db.Model):
-    __tablename__ = "blog_article_likes"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
-    article_id = db.Column(db.Integer, db.ForeignKey("blog_article.id"))
+article_likes = db.Table('likes_in_article',
+    db.Column('user_id', db.Integer, db.ForeignKey('blog_user.id')),
+    db.Column('article_id', db.Integer, db.ForeignKey('blog_article.id'))
+)
 
-
-class ArticleTags(db.Model):
-    __tablename__ = "blog_article_tags"
-    id = db.Column(db.Integer, primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey("blog_tag.id"))
-    article_id = db.Column(db.Integer, db.ForeignKey("blog_article.id"))
-
+article_tags = db.Table('blog_article_tag',
+    db.Column('tag_id', db.Integer, db.ForeignKey('blog_tag.id')),
+    db.Column('article_id', db.Integer, db.ForeignKey('blog_article.id'))
+)
 
 class ArticleModel(db.Model):
     __tablename__ = "blog_article"
@@ -31,8 +27,8 @@ class ArticleModel(db.Model):
     image_url = db.Column(db.String)
 
     author = db.relationship("UserModel")
-    likes = db.relationship("ArticleLikes")
-    tags = db.relationship("ArticleTags")
+    likes = db.relationship("UserModel", secondary=article_likes)
+    tags = db.relationship("TagModel", secondary=article_tags)
 
     @property
     def slug(self) -> str:
