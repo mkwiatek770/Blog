@@ -11,7 +11,14 @@ load_dotenv('./.env', verbose=True)
 
 from libs.image_helper import IMAGE_SET
 from resources.user import UserLogin, UserLogout, TokenRefresh, User, UserAvatar
-from resources.article import PublishedArticles, UnpublishedArticles, Article
+from resources.article import (
+    Articles,
+    ArticleDetail,
+    DraftArticles,
+    DraftArticleDetail,
+    ArticleSetTags,
+    ArticleUploadImage
+)
 from settings.blacklist import BLACKLIST
 from settings.ma import ma
 from settings.db import db
@@ -48,15 +55,19 @@ def handle_marshmallow_validation(err):
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token["jti"] in BLACKLIST
 
-
+# User endpoints
 api.add_resource(UserLogin, "/api/v1/login")
 api.add_resource(UserLogout, "/api/v1/logout")
 api.add_resource(TokenRefresh, "/api/v1/refresh")
 api.add_resource(User, "/api/v1/users/<string:username>")
 api.add_resource(UserAvatar, "/api/v1/users/<string:username>/avatar")
-api.add_resource(PublishedArticles, "/api/v1/articles")
-api.add_resource(UnpublishedArticles, "/api/v1/articles/draft")
-api.add_resource(Article, "/api/v1/articles/<string:slug>")
+# Article endpoints
+api.add_resource(Articles, "/api/v1/articles")
+api.add_resource(ArticleDetail, "/api/v1/articles/<string:slug>")
+api.add_resource(DraftArticles, "/api/v1/articles/draft")
+api.add_resource(DraftArticleDetail, "/api/v1/articles/draft/<string:slug>")
+api.add_resource(ArticleSetTags, "/api/v1/articles/<string:slug>/tags")
+api.add_resource(ArticleUploadImage, "/api/v1/articles/<string:slug>/image")
 
 if __name__ == "__main__":
     db.init_app(app)

@@ -1,14 +1,21 @@
+import traceback
+
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
-from models import ArticleModel
+from flask_uploads import UploadNotAllowed
+
+from libs import image_helper
+from models import ArticleModel, TagModel
 from schemas.article import ArticleSchema
+from schemas.image import ImageSchema
 
 article_schema = ArticleSchema()
 article_schema_many = ArticleSchema(many=True)
+image_schema = ImageSchema()
 
 
-class PublishedArticles(Resource):
+class Articles(Resource):
 
     @classmethod
     def get(cls):
@@ -16,18 +23,29 @@ class PublishedArticles(Resource):
         return article_schema_many.dump(published_articles), 200
 
     @classmethod
+    @jwt_required
     def post(cls):
-        # article_json = request.get_json()
-        # article_data = article_schema.load(article_json)
-        # if ArticleModel.find_by_title(article_json["title"]):
-        #     return {"message": "Article already exists"}
+        article_json = request.get_json()
+        article_data = article_schema.load(article_json)
 
-        # article = ArticleModel()
-        # article.title
-        pass
+        if ArticleModel.find_by_title(article_data.title):
+            return {"message": "Article with given title already exists"}
+
+        article_data.save_to_db()
+        return article_schema.dump(article_data), 201
 
 
-class UnpublishedArticles(Resource):
+class ArticleDetail(Resource):
+
+    @classmethod
+    def get(cls, slug: str):
+        article = ArticleModel.find_by_slug(slug)
+        if not article or not article.published_date:
+            return {"message": "Article not found"}, 404
+        return article_schema.dump(article), 200
+
+
+class DraftArticles(Resource):
 
     @classmethod
     @jwt_required
@@ -36,12 +54,66 @@ class UnpublishedArticles(Resource):
         return article_schema_many.dump(unpublished_articles), 200
 
 
-# TODO zwracać tylko obublikowane artykuły, dodac nowy resource dla nieopubliskowanych
-class Article(Resource):
+class DraftArticleDetail(Resource):
 
     @classmethod
+    @jwt_required
     def get(cls, slug: str):
         article = ArticleModel.find_by_slug(slug)
         if not article:
-            return {"message": "Article not found"}, 404
+            return {"message": "Article does not exist"}, 404
+        if article.published_date:
+            return {"message": "Article already published, it's not in draft list"}, 400
         return article_schema.dump(article), 200
+
+
+class ArticleSetTags(Resource):
+
+    @classmethod
+    @jwt_required
+    def put(cls, slug):
+
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article does not exist"}, 404
+        tags = request.get_json()["tags"]
+        article.tags = []
+        for tag in tags:
+            tag_object = TagModel.get_or_create(name=tag)
+            if not tag_object in article.tags:
+                article.tags.append(tag_object)
+        article.save_to_db()
+
+        return article_schema.dump(article), 200
+
+
+class ArticleUploadImage(Resource):
+
+    @classmethod
+    @jwt_required
+    def put(cls, slug):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article does not exist"}, 404
+
+        data = image_schema.load(request.files)
+        folder = "article_images"
+
+        try:
+            image_path = image_helper.save_image(data["image"], folder=folder)
+            basename = image_helper.get_basename(image_path)
+
+            previous_article_image = article.image_url
+            article.image_url = basename
+            article.save_to_db()
+
+            if previous_article_image:
+                image_helper.delete_image(previous_article_image, folder)
+
+            return {"message": "Image {} uploaded".format(basename)}, 201
+        except UploadNotAllowed:
+            extension = image_helper.get_extension(data["image"])
+            return {"message": "Extension not allowed"}, 400
+        except Exception:
+            traceback.print_exc()
+            return {"message": "Internal server error"}, 500

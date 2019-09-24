@@ -1,3 +1,4 @@
+from typing import Union
 from settings.db import db
 
 
@@ -8,12 +9,20 @@ class TagModel(db.Model):
     name = db.Column(db.String(80), nullable=False, unique=True)
 
     @classmethod
-    def find_by_id(cls, _id: int) -> "TagModel":
+    def find_by_id(cls, _id: int) -> Union["TagModel", None]:
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def find_by_name(cls, name: str) -> "TagModel":
+    def find_by_name(cls, name: str) -> Union["TagModel", None]:
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_or_create(cls, name: str) -> "TagModel":
+        tag = cls.find_by_name(name)
+        if not tag:
+            tag = cls(name=name)
+            tag.save_to_db()
+        return tag
 
     def save_to_db(self):
         db.session.add(self)

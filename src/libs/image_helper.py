@@ -16,7 +16,7 @@ def save_image(image: FileStorage, folder: str = None, name: str = None) -> str:
     return IMAGE_SET.save(image, folder, name)
 
 
-def delele_image(filename: str, folder: str) -> None:
+def delete_image(filename: str, folder: str) -> None:
     image_path = get_path(filename, folder)
     os.remove(image_path)
 

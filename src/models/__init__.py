@@ -1,3 +1,3 @@
-from .article import ArticleModel, ArticleLikes, ArticleTags
+from .article import ArticleModel
 from .tag import TagModel
 from .user import UserModel
