@@ -113,7 +113,7 @@ class UserAvatar(Resource):
             user.avatar_name = basename
             user.save_to_db()
 
-            if previous_avatar_name != "":
+            if previous_avatar_name:
                 image_helper.delete_image(previous_avatar_name, folder)
 
             return {"message": "Image {} uploaded".format(basename)}, 201

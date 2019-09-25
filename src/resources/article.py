@@ -2,11 +2,11 @@ import traceback
 
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_current_user
 from flask_uploads import UploadNotAllowed
 
 from libs import image_helper
-from models import ArticleModel, TagModel
+from models import ArticleModel, TagModel, UserModel
 from schemas.article import ArticleSchema
 from schemas.image import ImageSchema
 
@@ -43,6 +43,29 @@ class ArticleDetail(Resource):
         if not article or not article.published_date:
             return {"message": "Article not found"}, 404
         return article_schema.dump(article), 200
+
+    @classmethod
+    @jwt_required
+    def put(cls, slug: str):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+
+        article_json = request.get_json()
+        article.description = article_json["description"]
+        article.content = article_json["content"]
+        article.save_to_db()
+
+        return article_schema.dump(article), 204
+
+    @classmethod
+    @jwt_required
+    def delete(cls, slug: str):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        article.delete_from_db()
+        return {"message": "Article deleted"}, 200
 
 
 class DraftArticles(Resource):
@@ -117,3 +140,72 @@ class ArticleUploadImage(Resource):
         except Exception:
             traceback.print_exc()
             return {"message": "Internal server error"}, 500
+
+
+class ArticlePublish(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls, slug):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        if not article.image_url:
+            return {"message": "Article must contain image before publishing"}, 400
+        if article.tags == []:
+            return {"message": "Article must have at least one tag assigned"}, 400
+
+        article.publish()
+        return {"message": "Article has been published"}, 200
+
+
+class ArticleUnpublish(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls, slug):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        article.unpublish()
+        return {"message": "Article has been unpublished"}, 200
+
+
+class ArticleLike(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls, slug):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        user_id = get_jwt_identity()
+        user = UserModel.find_by_id(user_id)
+
+        if user == article.author:
+            return {"message": "You can't like your own article"}, 403
+        if user in article.likes:
+            return {"message": "You can't like this article twice"}, 403
+
+        article.likes.append(user)
+        article.save_to_db()
+        return {"message": "Article with id={} has been liked by {}".format(article.id, user.username)}, 200
+
+
+class ArticleRevokeLike(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls, slug):
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        user_id = get_jwt_identity()
+        user = UserModel.find_by_id(user_id)
+
+        if not user in article.likes:
+            return {"message": "You have to like this article before you can revoke like"}, 403
+
+        article.likes.remove(user)
+        article.save_to_db()
+        return {"message": "Article with id={} has been disliked by {}".format(article.id, user.username)}, 200

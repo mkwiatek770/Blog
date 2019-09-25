@@ -5,14 +5,19 @@ from settings.db import db
 
 
 article_likes = db.Table('likes_in_article',
-    db.Column('user_id', db.Integer, db.ForeignKey('blog_user.id')),
-    db.Column('article_id', db.Integer, db.ForeignKey('blog_article.id'))
-)
+                         db.Column('user_id', db.Integer,
+                                   db.ForeignKey('blog_user.id')),
+                         db.Column('article_id', db.Integer,
+                                   db.ForeignKey('blog_article.id'))
+                         )
 
 article_tags = db.Table('blog_article_tag',
-    db.Column('tag_id', db.Integer, db.ForeignKey('blog_tag.id')),
-    db.Column('article_id', db.Integer, db.ForeignKey('blog_article.id'))
-)
+                        db.Column('tag_id', db.Integer,
+                                  db.ForeignKey('blog_tag.id')),
+                        db.Column('article_id', db.Integer,
+                                  db.ForeignKey('blog_article.id'))
+                        )
+
 
 class ArticleModel(db.Model):
     __tablename__ = "blog_article"
@@ -57,7 +62,7 @@ class ArticleModel(db.Model):
         self.published_date = datetime.utcnow()
         self.save_to_db()
 
-    def unplish(self) -> None:
+    def unpublish(self) -> None:
         self.published_date = None
         self.save_to_db()
 

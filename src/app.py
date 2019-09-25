@@ -17,7 +17,11 @@ from resources.article import (
     DraftArticles,
     DraftArticleDetail,
     ArticleSetTags,
-    ArticleUploadImage
+    ArticleUploadImage,
+    ArticlePublish,
+    ArticleUnpublish,
+    ArticleLike,
+    ArticleRevokeLike
 )
 from settings.blacklist import BLACKLIST
 from settings.ma import ma
@@ -68,6 +72,11 @@ api.add_resource(DraftArticles, "/api/v1/articles/draft")
 api.add_resource(DraftArticleDetail, "/api/v1/articles/draft/<string:slug>")
 api.add_resource(ArticleSetTags, "/api/v1/articles/<string:slug>/tags")
 api.add_resource(ArticleUploadImage, "/api/v1/articles/<string:slug>/image")
+api.add_resource(ArticlePublish, "/api/v1/articles/<string:slug>/publish")
+api.add_resource(ArticleUnpublish, "/api/v1/articles/<string:slug>/unpublish")
+api.add_resource(ArticleLike, "/api/v1/articles/<string:slug>/like")
+api.add_resource(ArticleRevokeLike, "/api/v1/articles/<string:slug>/revoke-like")
+
 
 if __name__ == "__main__":
     db.init_app(app)
