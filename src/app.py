@@ -21,7 +21,8 @@ from resources.article import (
     ArticlePublish,
     ArticleUnpublish,
     ArticleLike,
-    ArticleRevokeLike
+    ArticleRevokeLike,
+    ArticleChangeTitle
 )
 from settings.blacklist import BLACKLIST
 from settings.ma import ma
@@ -76,6 +77,7 @@ api.add_resource(ArticlePublish, "/api/v1/articles/<string:slug>/publish")
 api.add_resource(ArticleUnpublish, "/api/v1/articles/<string:slug>/unpublish")
 api.add_resource(ArticleLike, "/api/v1/articles/<string:slug>/like")
 api.add_resource(ArticleRevokeLike, "/api/v1/articles/<string:slug>/revoke-like")
+api.add_resource(ArticleChangeTitle, "/api/v1/articles/<string:slug>/new-title")
 
 
 if __name__ == "__main__":

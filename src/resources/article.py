@@ -209,3 +209,22 @@ class ArticleRevokeLike(Resource):
         article.likes.remove(user)
         article.save_to_db()
         return {"message": "Article with id={} has been disliked by {}".format(article.id, user.username)}, 200
+
+
+class ArticleChangeTitle(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls, slug):
+        new_title = request.get_json()["title"]
+        article = ArticleModel.find_by_slug(slug)
+        if not article:
+            return {"message": "Article not found"}, 404
+        if new_title == article.title:
+            return {"message": "You're trying to change to existing title"}
+        if ArticleModel.find_by_title(new_title):
+            return {"message": "This title is taken"}
+
+        article.title = new_title
+        article.save_to_db()
+        return {"message": "Title has been changed"}, 200
