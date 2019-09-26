@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "baefa298d44b97f1be91f19434a194a59484ef49aee6fcb87add9f6b6f9d0fcd"
+            "sha256": "3b043bbf150ddfd92dc2d8cd3e1369d2f435372a476fb7ea7c5fa68b3b0a62fd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,9 +18,9 @@
     "default": {
         "alembic": {
             "hashes": [
-                "sha256:5609afbb2ab142a991b15ae436347c475f8a517f1610f2fd1b09cdca7c311f3f"
+                "sha256:9f907d7e8b286a1cfb22db9084f9ce4fde7ad7956bb496dc7c952e10ac90e36a"
             ],
-            "version": "==1.2.0"
+            "version": "==1.2.1"
         },
         "aniso8601": {
             "hashes": [
@@ -300,12 +300,29 @@
             ],
             "version": "==1.3.8"
         },
+        "sqlalchemy-jsonfield": {
+            "hashes": [
+                "sha256:d0195c2ce97313ab1875585a3017035cc1671236faef4ca2c88600690f31e5ad",
+                "sha256:ffbef8af92cc25f7cebc9e05ac6a1dfc71e5366f74bed0814cc539328400d93f"
+            ],
+            "index": "pypi",
+            "version": "==0.8.0"
+        },
         "text-unidecode": {
             "hashes": [
                 "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8",
                 "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"
             ],
             "version": "==1.3"
+        },
+        "typing": {
+            "hashes": [
+                "sha256:91dfe6f3f706ee8cc32d38edbbf304e9b7583fb37108fef38229617f8b3eba23",
+                "sha256:c8cabb5ab8945cd2f54917be357d134db9cc1eb039e59d1606dc1e60cb1d9d36",
+                "sha256:f38d83c5a7a7086543a0f649564d661859c5146a85775ab90c0d2f93ffaa9714"
+            ],
+            "markers": "python_version < '3.7'",
+            "version": "==3.7.4.1"
         },
         "werkzeug": {
             "hashes": [
