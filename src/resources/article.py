@@ -19,12 +19,21 @@ class Articles(Resource):
 
     @classmethod
     def get(cls):
+        """
+        Returns list of published articles.
+        """
         published_articles = ArticleModel.find_all()
         return article_schema_many.dump(published_articles), 200
 
     @classmethod
     @jwt_required
     def post(cls):
+        """
+        Create new article.
+
+        Article published_date field is not set which means is not available
+        publicly.
+        """
         article_json = request.get_json()
         article_data = article_schema.load(article_json)
 
@@ -39,6 +48,11 @@ class ArticleDetail(Resource):
 
     @classmethod
     def get(cls, slug: str):
+        """
+        Return specific article data.
+
+        Only published articles are available via this endpoint
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article or not article.published_date:
             return {"message": "Article not found"}, 404
@@ -47,6 +61,9 @@ class ArticleDetail(Resource):
     @classmethod
     @jwt_required
     def put(cls, slug: str):
+        """
+        Update specific article instance
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -61,6 +78,9 @@ class ArticleDetail(Resource):
     @classmethod
     @jwt_required
     def delete(cls, slug: str):
+        """
+        Delete specific data instance
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -73,6 +93,9 @@ class DraftArticles(Resource):
     @classmethod
     @jwt_required
     def get(cls):
+        """
+        Return list of unpublished articles.
+        """
         unpublished_articles = ArticleModel.find_all(published=False)
         return article_schema_many.dump(unpublished_articles), 200
 
@@ -82,6 +105,11 @@ class DraftArticleDetail(Resource):
     @classmethod
     @jwt_required
     def get(cls, slug: str):
+        """
+        Return specific article data.
+
+        Only published articles are available via this endpoint
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article does not exist"}, 404
@@ -95,7 +123,9 @@ class ArticleSetTags(Resource):
     @classmethod
     @jwt_required
     def put(cls, slug):
-
+        """
+        Assign tags to specific article instance.
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article does not exist"}, 404
@@ -115,6 +145,9 @@ class ArticleUploadImage(Resource):
     @classmethod
     @jwt_required
     def put(cls, slug):
+        """
+        Assign image to specific article instance.
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article does not exist"}, 404
@@ -147,6 +180,9 @@ class ArticlePublish(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug):
+        """
+        Publish article instance by setting it's published_date field.
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -166,6 +202,9 @@ class ArticleUnpublish(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug):
+        """
+        Unpublish article by unsetting published_date field.
+        """
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -178,6 +217,7 @@ class ArticleLike(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug):
+        """Like specific article instance by current logged in user."""
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -199,6 +239,7 @@ class ArticleRevokeLike(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug):
+        """Revoke like from article by logged in user."""
         article = ArticleModel.find_by_slug(slug)
         if not article:
             return {"message": "Article not found"}, 404
@@ -218,6 +259,7 @@ class ArticleChangeTitle(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug):
+        """Update article title field."""
         new_title = request.get_json()["title"]
         article = ArticleModel.find_by_slug(slug)
         if not article:

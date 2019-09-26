@@ -13,11 +13,20 @@ class Snippets(Resource):
 
     @classmethod
     def get(cls):
+        """
+        List of all published snippets.
+        """
         snippets = SnippetModel.find_all()
         return snippet_schema_many.dump(snippets)
 
     @classmethod
     def post(cls):
+        """
+        Create new snippet.
+
+        published_date field is not set which means it's not avaiable
+        publicly by everyone
+        """
         snippet_json = request.get_json()
         snippet = snippet_schema.load(snippet_json)
         if SnippetModel.find_by_title(snippet.title):
@@ -36,6 +45,9 @@ class SnippetDetail(Resource):
 
     @classmethod
     def get(cls, slug: str):
+        """
+        Return specific snippet data (only published one)
+        """
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet or snippet.published_date == None:
             return {"message": "Snippet does not exist"}, 404
@@ -44,6 +56,9 @@ class SnippetDetail(Resource):
     @classmethod
     @jwt_required
     def put(cls, slug: str):
+        """
+        Update specific snippet data.
+        """
         snippet_json = request.get_json()
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet:
@@ -64,6 +79,9 @@ class SnippetDetail(Resource):
     @classmethod
     @jwt_required
     def delete(cls, slug: str):
+        """
+        Delete specific snippet instance.
+        """
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet:
             return {"message": "Snippet does not exist"}, 404
@@ -76,6 +94,9 @@ class SnippetsNotApproved(Resource):
     @classmethod
     @jwt_required
     def get(cls):
+        """
+        Return list of unpublied snippets.
+        """
         snippets = SnippetModel.find_all(published=False)
         return snippet_schema_many.dump(snippets), 200
 
@@ -84,6 +105,9 @@ class SnippetNotAppprovedDetail(Resource):
 
     @classmethod
     def get(cls, slug: str):
+        """
+        Return specific unpublished snippet data.
+        """
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet or snippet.published_date:
             return {"message": "Snippet does not exist"}, 404
@@ -95,6 +119,9 @@ class ApproveSnippet(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug: str):
+        """
+        Approve specific instance.
+        """
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet:
             return {"message": "Snippet not found"}, 404
@@ -109,6 +136,9 @@ class RevokeApprovalSnippet(Resource):
     @classmethod
     @jwt_required
     def post(cls, slug: str):
+        """
+        Revoke approval of specific instance.
+        """
         snippet = SnippetModel.find_by_slug(slug)
         if not snippet:
             return {"message": "Snippet not found"}, 404

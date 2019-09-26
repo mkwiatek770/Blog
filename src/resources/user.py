@@ -25,6 +25,11 @@ image_schema = ImageSchema()
 class UserLogin(Resource):
     @classmethod
     def post(cls):
+        """
+        Log in specific user.
+
+        access_token and refresh_token are returned.
+        """
         user_json = request.get_json()
         user_data = user_schema.load(user_json)
         user = UserModel.find_by_username(user_data.username)
@@ -45,6 +50,9 @@ class UserLogout(Resource):
     @classmethod
     @jwt_required
     def post(cls):
+        """
+        Log out by setting JWT tokens to no longer valid.
+        """
         jti = get_raw_jwt()["jti"]
         user_id = get_jwt_identity()
         BLACKLIST.add(jti)
@@ -55,18 +63,22 @@ class TokenRefresh(Resource):
     @classmethod
     @jwt_refresh_token_required
     def post(cls):
+        """
+        Refresh access_token by passing refresh_token
+        """
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
 
 
 class User(Resource):
-    """
-    Resource to access user data.
-    Specific user will be identified by username
-    """
+
     @classmethod
     def get(cls, username: str):
+        """
+        Resource to access user data.
+        Specific user will be identified by username
+        """
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User {} not found".format(username)}, 404
@@ -74,12 +86,12 @@ class User(Resource):
 
 
 class UserAvatar(Resource):
-    """
-    Resource to handle specific user avatar.
-    """
 
     @classmethod
     def get(cls, username: str):
+        """
+        Get specific user avatar.
+        """
         user = UserModel.find_by_username(username)
         if not user:
             return {"message": "User {} not found".format(username)}, 404
@@ -96,6 +108,9 @@ class UserAvatar(Resource):
     @classmethod
     @jwt_required
     def put(cls, username: str):
+        """
+        Add image and assign it to specific user
+        """
         user_id = get_jwt_identity()
         user = UserModel.find_by_username(username)
         if not user:
@@ -127,6 +142,9 @@ class UserAvatar(Resource):
     @classmethod
     @jwt_required
     def delete(cls, username: str):
+        """
+        Delete specific user's avatar.
+        """
         user_id = get_jwt_identity()
         user = UserModel.find_by_username(username)
         if not user:
