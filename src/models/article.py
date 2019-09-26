@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List
+from sqlalchemy_jsonfield import JSONField
 from slugify import slugify
 from settings.db import db
 
@@ -25,7 +26,8 @@ class ArticleModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
     title = db.Column(db.String(200), nullable=False, unique=True)
-    content = db.Column(db.String, nullable=False)
+    content = db.Column(JSONField(enforce_string=True,
+                                  enforce_unicode=False), nullable=False)
     description = db.Column(db.String, nullable=False)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     published_date = db.Column(db.DateTime)

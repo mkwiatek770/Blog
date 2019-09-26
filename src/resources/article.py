@@ -56,7 +56,7 @@ class ArticleDetail(Resource):
         article.content = article_json["content"]
         article.save_to_db()
 
-        return article_schema.dump(article), 204
+        return article_schema.dump(article), 200
 
     @classmethod
     @jwt_required
