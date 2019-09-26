@@ -47,18 +47,18 @@ class SnippetModel(db.Model):
     def find_by_title(cls, title: str) -> Union["SnippetModel", None]:
         return cls.query.filter_by(title=title).first()
 
-    def approve(self):
+    def approve(self) -> None:
         self.published_date = datetime.utcnow()
         self.save_to_db()
 
-    def revoke_approval(self):
+    def revoke_approval(self) -> None:
         self.published_date = None
         self.save_to_db()
 
-    def save_to_db(self):
+    def save_to_db(self) -> None:
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         db.session.delete(self)
-        db.sesion.commit()
+        db.session.commit()

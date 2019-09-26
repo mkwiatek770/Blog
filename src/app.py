@@ -24,6 +24,14 @@ from resources.article import (
     ArticleRevokeLike,
     ArticleChangeTitle
 )
+from resources.snippet import (
+    Snippets,
+    SnippetsNotApproved,
+    SnippetDetail,
+    SnippetNotAppprovedDetail,
+    ApproveSnippet,
+    RevokeApprovalSnippet
+)
 from settings.blacklist import BLACKLIST
 from settings.ma import ma
 from settings.db import db
@@ -78,6 +86,13 @@ api.add_resource(ArticleUnpublish, "/api/v1/articles/<string:slug>/unpublish")
 api.add_resource(ArticleLike, "/api/v1/articles/<string:slug>/like")
 api.add_resource(ArticleRevokeLike, "/api/v1/articles/<string:slug>/revoke-like")
 api.add_resource(ArticleChangeTitle, "/api/v1/articles/<string:slug>/new-title")
+# Snippets endpoint
+api.add_resource(Snippets, "/api/v1/snippets")
+api.add_resource(SnippetsNotApproved, "/api/v1/snippets-not-approved")
+api.add_resource(SnippetDetail, "/api/v1/snippets/<string:slug>")
+api.add_resource(SnippetNotAppprovedDetail, "/api/v1/snippets-not-approved/<string:slug>")
+api.add_resource(ApproveSnippet, "/api/v1/snippets/<string:slug>/approve")
+api.add_resource(RevokeApprovalSnippet, "/api/v1/snippets/<string:slug>/revoke")
 
 
 if __name__ == "__main__":

@@ -154,6 +154,8 @@ class ArticlePublish(Resource):
             return {"message": "Article must contain image before publishing"}, 400
         if article.tags == []:
             return {"message": "Article must have at least one tag assigned"}, 400
+        if article.published_date:
+            return {"message": "Article has been already published"}, 400
 
         article.publish()
         return {"message": "Article has been published"}, 200
