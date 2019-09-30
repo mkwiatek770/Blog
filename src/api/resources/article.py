@@ -15,6 +15,9 @@ article_schema_many = ArticleSchema(many=True)
 image_schema = ImageSchema()
 
 
+# TODO add pagination / sorting and filtering according to this resources:
+# https://www.moesif.com/blog/technical/api-design/REST-API-Design-Filtering-Sorting-and-Pagination/
+# https://stackoverflow.com/questions/55543011/flask-restful-pagination
 class Articles(Resource):
 
     @classmethod
