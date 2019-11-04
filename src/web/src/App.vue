@@ -1,10 +1,26 @@
 <template>
   <div id="app">
     <div id="nav">
-      <a id="brand">4Code</a>
-      <router-link to="/">Home</router-link>|
-      <router-link to="/about">About</router-link>|
-      <router-link to="/todo">#TODO</router-link>
+      <div class="row">
+        <div class="col s3 left-align">
+          <a id="brand">4Code</a>
+        </div>
+        <div class="col s6">
+          <router-link to="/">Home</router-link>|
+          <router-link to="/about">About</router-link>|
+          <router-link to="/todo">Todo</router-link>
+        </div>
+        <div class="col s3">
+          <div class="row">
+            <div class="col s6 right-align">
+              <i class="material-icons">search</i>
+            </div>
+            <div class="col s6 left-align">
+              <span>Search</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <router-view />
   </div>
