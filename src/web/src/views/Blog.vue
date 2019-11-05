@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="blog">
     <img alt="Vue logo" src="../assets/logo.png" />
     <h1>Articles:</h1>
     <hr />
@@ -12,7 +12,7 @@
 import axios from "axios";
 
 export default {
-  name: "home",
+  name: "blog",
   components: {},
   data() {
     return {};
