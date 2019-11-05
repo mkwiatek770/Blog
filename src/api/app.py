@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -47,7 +48,7 @@ api = Api(app)
 jwt = JWTManager(app)
 migrate = Migrate(app=app, db=db)
 bcrypt = Bcrypt(app)
-
+CORS(app)
 
 @app.before_first_request
 def create_tables():
