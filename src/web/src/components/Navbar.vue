@@ -43,8 +43,16 @@
       </div>
       <ul class="right hide-on-large-only">
         <li>
-          <a href="sass.html">
-            <i class="material-icons">search</i>
+          <input
+            id="search"
+            type="text"
+            style="padding-top: 10px; width: 40%; float: right; color: white;"
+            v-if="searchInput"
+          />
+        </li>
+        <li>
+          <a>
+            <i v-on:click="searchInput = !searchInput" class="material-icons">search</i>
           </a>
         </li>
         <li>
@@ -59,7 +67,12 @@
 
 <script>
 export default {
-  props: ["current"]
+  props: ["current"],
+  data: function() {
+    return {
+      searchInput: false
+    };
+  }
 };
 </script>
 
